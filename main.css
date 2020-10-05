@@ -1,0 +1,32 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(15, auto);
+    grid-gap: 1px;
+    width: 750px;
+    height: 750px;
+}
+.grid-item {
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+}
+.normalSquare {
+    color: black;
+    background-color: white;
+}
+.doubleLetter {
+    color: black;
+    background-color: cadetblue;
+}
+.tripleLetter {
+    color: black;
+    background-color: darkblue;
+}
+.doubleWord {
+    color: black;
+    background-color: pink;
+}
+.tripleWord {
+    color: black;
+    background-color: red;
+}
