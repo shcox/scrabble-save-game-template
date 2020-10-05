@@ -7,7 +7,13 @@ const dictionary = JSON.parse(readFileSync("./dictionary.json"));
  * @returns {boolean} Returns whether the given word is a valid word.
  */
 export function isValid(word) {
-    // TODO
+    let valid = false;
+    dictionary.forEach(str => {
+        if (str === word) {
+            valid = true;
+        }
+    });
+    return valid;
 }
 
 /**
@@ -17,7 +23,7 @@ export function isValid(word) {
  * @returns {Object<string, number>} A copy of the parameter. 
  */
 function copyAvailableTiles(availableTiles) {
-    // TODO
+    return JSON.parse(JSON.stringify(availableTiles));
 }
 
 /**
@@ -30,6 +36,30 @@ function copyAvailableTiles(availableTiles) {
  */
 export function canConstructWord(availableTiles, word) {
     // Use your previous solution or the class solution.
+    const usedLetters = {};
+    let wordFailed = false;
+    word.split('').forEach(letter => {
+        if (letter in availableTiles || '*' in availableTiles) {
+            if (!(letter in usedLetters) && (letter in availableTiles)) {
+                usedLetters[letter] = 1;
+            } else if (usedLetters[letter] + 1 <= availableTiles[letter]) {
+                usedLetters[letter]++;
+            }  else if ('*' in availableTiles) {
+                if (!('*' in usedLetters)) {
+                    usedLetters['*'] = 1;
+                } else if (usedLetters['*'] + 1 <= availableTiles['*']) {
+                    usedLetters['*']++;
+                } else {
+                    wordFailed = true;
+                }
+            } else {
+                wordFailed = true;
+            }
+        } else {
+            wordFailed = true;
+        }
+    });
+    return !wordFailed;
 }
 
 /**
@@ -41,6 +71,15 @@ export function canConstructWord(availableTiles, word) {
  */
 export function baseScore(word) {
     // Use your previous solution or the class solution.
+    const score = {'*': 0, 'e': 1, 'a': 1, 'i': 1, 'o': 1, 'n': 1, 'r': 1, 't': 1,
+        'l': 1, 's': 1, 'u': 1, 'd': 2, 'g': 2, 'b': 3, 'c': 3, 'm': 3, 'p': 3, 
+        'f': 4, 'h': 4, 'v': 4, 'w': 4, 'y': 4, 'k': 5, 'j': 8, 'x': 8, 'q': 10,
+        'z': 10};
+    let wordScore = 0;
+    word.split('').forEach(letter => {
+        wordScore += score[letter];
+    });
+    return wordScore;
 }
 
 /**
@@ -51,7 +90,15 @@ export function baseScore(word) {
  * @returns {Array<string>} All words that can be constructed with the given tiles. The array is empty if there are no words available to construct.
  */
 export function possibleWords(availableTiles) {
-    // Use your previous solution or the class solution.
+    const words = [];
+    const fs = require('fs');
+    //const dict = JSON.parse(fs.readFileSync('dictionary.json', 'utf8'));
+    dictionary.forEach(word => {
+        if (canConstructWord(availableTiles, word)) {
+            words.push(word);
+        }
+    });
+    return words;
 }
 
 /**
@@ -63,4 +110,15 @@ export function possibleWords(availableTiles) {
  */
 export function bestPossibleWords(availableTiles) {
     // Use your previous solution or the class solution.
+    let words = [];
+    const hs = 0; //highest score
+    const dict = possibleWords(availableTiles);
+    dict.forEach(word => {
+        if (baseScore(word) > hs) {
+            words = [word];
+        } else if (baseScore(word) === hs) {
+            words.push(word);
+        } 
+    });
+    return words;
 }
